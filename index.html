@@ -2,18 +2,47 @@
 <html lang="en" dir="ltr">
     <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>MongoDB Front End</title>
         <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
         <link rel="stylesheet" href="css/style.css">
     </head>
     <body>
-        <h1>MongoDB Front End</h1>
+      <div class="container">
+        <h1>Product Library</h1>
+        <h2>Add New Product</h2>
+        <form>
+          <div class="form-group">
+                <label for="productName">Product name</label>
+                <input type="email" class="form-control" id="productName" aria-describedby="emailHelp" placeholder="">
+          </div>
+            <div class="form-group">
+                <label for="productPrice">Product price</label>
+                <input type="password" class="form-control" id="productPrice" placeholder="">
+            </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <br>
+        <h2>All Products</h2>
+        <div class="list-group">
+            <a class="list-group-item list-group-item-action">Product 1 <div class = "buttonStyle"><button type="button" class="btn btn-info buttonSpace">Edit</button><button type="button" class="btn btn-danger">Remove</button></div></a>
+            <a class="list-group-item list-group-item-action">Product 2 <div class = "buttonStyle"><button type="button" class="btn btn-info buttonSpace">Edit</button><button type="button" class="btn btn-danger">Remove</button></div></a>
+            <a class="list-group-item list-group-item-action">Product 3 <div class = "buttonStyle"><button type="button" class="btn btn-info buttonSpace">Edit</button><button type="button" class="btn btn-danger">Remove</button></div></a>
+            <a class="list-group-item list-group-item-action">Product 4 <div class = "buttonStyle"><button type="button" class="btn btn-info buttonSpace">Edit</button><button type="button" class="btn btn-danger">Remove</button></div></a>
+            <a class="list-group-item list-group-item-action">Product 5 <div class = "buttonStyle"><button type="button" class="btn btn-info buttonSpace">Edit</button><button type="button" class="btn btn-danger">Remove</button></div></a>
+
+        </div>
+
+
+      </div>
+
+
 
 
 
         <script src="node_modules/jquery/dist/jquery.min.js" charset="utf-8"></script>
-        <script src="node_modules/bootstrap/dist/js/bootstrap.min.js" charset="utf-8"></script>
         <script src="node_modules/popper.js/dist/umd/popper.min.js" charset="utf-8"></script>
-        <script src="js/style.js" charset="utf-8"></script>
+        <script src="node_modules/bootstrap/dist/js/bootstrap.min.js" charset="utf-8"></script>
+        <script src="js/script.js" charset="utf-8"></script>
     </body>
 </html>

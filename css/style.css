@@ -5,5 +5,13 @@
 }
 
 body{
-    background-color: tomato;
+    /* background-color: tomato; */
+}
+
+.buttonStyle{
+    float: right;
+}
+
+.buttonSpace{
+    margin-right: 10px;
 }

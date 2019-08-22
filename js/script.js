@@ -51,4 +51,8 @@ $('#addProductButton').click(function(){
         })
     }
     // Now we want to send/POST data
-})
+});
+
+$('#contactButton').click(function(){
+    
+});

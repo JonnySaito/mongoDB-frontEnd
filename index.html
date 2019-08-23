@@ -11,23 +11,6 @@
       <div class="container">
         <h1>Product Library</h1>
         <h2>Add New Products</h2>
-
-        <div class="container">
-            <h2>Contact Us</h2>
-              <form action="action_page.php">
-                <label for="userName">Name</label>
-                <input type="text" id="userName" placeholder="Your name...">
-                <br>
-                <label for="userEmail">Email</label>
-                <input type="text" id="userEmail" placeholder="Your email...">
-                <br>
-                <label for="userMessage">Message</label>
-                <textarea id="userMessage" placeholder="Write something..." style="height:200px"></textarea>
-                <input type="submit" id="submitMessage" value="Submit">
-              </form>
-        </div>
-
-
         <form>
           <div class="form-group">
                 <label for="productName">Product name</label>
@@ -39,6 +22,25 @@
             </div>
           <button type="submit" class="btn btn-primary" id="addProductButton">Add product</button>
         </form>
+        <br>
+        <br>
+        <h2>Contact us</h2>
+        <form>
+          <div class="form-group">
+                <label for="userName">Your name</label>
+                <input type="text" class="form-control" id="userName" placeholder="">
+          </div>
+            <div class="form-group">
+                <label for="userEmail">Your email</label>
+                <input type="text" class="form-control" id="userEmail" placeholder="">
+            </div>
+            <div class="form-group">
+              <label for="userMessage">Message</label>
+              <textarea id="userMessage" placeholder="Write something..."></textarea>
+            </div>
+          <button type="submit" class="btn btn-secondary" id="contactButton">Contact us</button>
+        </form>
+        <br>
         <br>
         <h2>All Products</h2>
         <div class="list-group" id="productBox">

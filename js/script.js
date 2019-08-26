@@ -10,14 +10,14 @@ $.ajax({
   success:function(keys){
     serverURL = keys['SERVER_URL'];
     serverPort = keys['SERVER_PORT'];
-    getProductsData();
+    getProductData();
   },
   error: function(){
     console.log('cannot find config.json file, cannot run application');
   }
 });
 
-getProductsData = () => {
+getProductData = () => {
     $.ajax({
         url: `${serverURL}:${serverPort}/allProducts`,
         type: 'GET',
@@ -76,37 +76,37 @@ $('#addProductButton').click(function(){
 
 
 
-// $('#contactButton').click(function(){
-//     event.preventDefault();
-//     let userName = $('#userName').val();
-//     let userEmail = $('#userEmail').val();
-//     let userMessage = $('#userMessage').val();
-//     // console.log(userName, userEmail, userMessage);
-//     if(userName.length === 0){
-//       console.log('please enter your name');
-//     } else if(userEmail.length === 0){
-//       console.log('please enter your email address');
-//     } else if(userMessage.length === 0){
-//       console.log('please write a message to us, kind sir or madam');
-//     } else{
-//       $.ajax({
-//         url: `${SERVER_URL}:${PORT_URL}/contact`,
-//         type: 'POST',
-//         data: {
-//           name: userName,
-//           email: userEmail,
-//           message: userMessage
-//         },
-//         success: function(result){
-//           console.log(result);
-//         },
-//         error: function(error){
-//           console.log(error);
-//           console.log('something screwed up with sending user data');
-//         }
-//       })
-//     }
-// });
+$('#contactButton').click(function(){
+    event.preventDefault();
+    let userName = $('#userName').val();
+    let userEmail = $('#userEmail').val();
+    let userMessage = $('#userMessage').val();
+    // console.log(userName, userEmail, userMessage);
+    if(userName.length === 0){
+      console.log('please enter your name');
+    } else if(userEmail.length === 0){
+      console.log('please enter your email address');
+    } else if(userMessage.length === 0){
+      console.log('please write a message to us, kind sir or madam');
+    } else{
+      $.ajax({
+        url: `${SERVER_URL}:${SERVER_PORT}/contact`,
+        type: 'POST',
+        data: {
+          name: userName,
+          email: userEmail,
+          message: userMessage
+        },
+        success: function(result){
+          console.log(result);
+        },
+        error: function(error){
+          console.log(error);
+          console.log('something screwed up with sending user data');
+        }
+      })
+    }
+});
 
 
 
@@ -126,7 +126,7 @@ $('#addProductButton').click(function(){
 //           portData = keys;
 //           console.log(portData);
 //           // $.ajax({
-//           //     url: `${portData.SERVER_URL}:${portData.PORT_URL}/allProducts`,
+//           //     url: `${portData.SERVER_URL}:${portData.SERVER_PORT}/allProducts`,
 //           //     type: 'GET',
 //           //     dataType: 'json',
 //           //     success: function(data){
@@ -165,7 +165,7 @@ $('#addProductButton').click(function(){
 //         } else {
 //             console.log(`${productName} costs $${productPrice}`);
 //             $.ajax({
-//                 url: `${SERVER_URL}:${PORT_URL}/product`,
+//                 url: `${SERVER_URL}:${SERVER_PORT}/product`,
 //                 type: 'POST',
 //                 data: {
 //                     name: productName,

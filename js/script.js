@@ -27,7 +27,7 @@ getProductData = () => {
             for (var i = 0; i < data.length; i++) {
                 $('#productBox').append(`
                     <li class="list-group-item d-flex justify-content-between align-items-center" data-id="${data[i]._id}">
-                        ${data[i].name}
+                        <span class="productName">${data[i].name}</span>
                         <div>
                             <button class="btn btn-info editBtn">Edit</button>
                             <button class="btn btn-danger">Remove</button>
@@ -93,11 +93,17 @@ $('#addProductButton').click(function(){
                     $('#productID').val(null);
                     $('#addProductButton').text('Add New Product').removeClass('btn-warning');
                     $('#heading').text('Add New Product');
-                    editing = false
+                    editing = false;
+                    const allProducts = $('.productItem');
+                    allProducts.each(function(){
+                        if($(this).data('id') === id){
+                            $(this).find('.productName').text(productName);
+                        }
+                    });
                 },
                 error: function(error){
                     console.log(error);
-                    console.log('Something went wrong with editing the product')
+                    console.log('Something went wrong with editing the product');
                 }
             });
                 // console.log(`Edited ${productName} to be $${productPrice}`);
@@ -115,11 +121,11 @@ $('#addProductButton').click(function(){
                     $('#productName').val(null);
                     $('#productPrice').val(null);
                     $('#productList').append(`
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            ${result.name}
+                        <li class="list-group-item d-flex justify-content-between align-items-center productItem">
+                            <span class="productName">${result.name}</span>
                             <div>
                                 <button class="btn btn-info editBtn">Edit</button>
-                                <button class="btn btn-danger">Remove</button>
+                                <button class="btn btn-danger removeBtn">Remove</button>
                             </div>
                         </li>
                     `);
@@ -133,7 +139,28 @@ $('#addProductButton').click(function(){
     }
 });
 
-
+$('#productList').on('click', '.removeBtn', function(){
+    event.preventDefault();
+    const id = $(this).parent().parent().data('id');
+    const li = $(this).parent().parent();
+    $.ajax({
+      url: `${serverURL}:${serverPort}/products/${id}`,
+      type: 'DELETE',
+      success: function(result){
+        console.log('You removed an item');
+        const allProducts = $('.productItem');
+        allProducts.each(function(){
+            if($(this).data('id') === id){
+                $(this).remove();
+            }
+        });
+      },
+      error:function(err) {
+        console.log(err);
+        console.log('something went wrong deleting the product');
+      }
+    })
+});
 
 $('#contactButton').click(function(){
     event.preventDefault();

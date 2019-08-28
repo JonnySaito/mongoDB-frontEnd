@@ -1,4 +1,4 @@
-*{
+/* *{
     box-sizing: border-box;
     margin: 0 auto;
     padding: 0;
@@ -6,16 +6,16 @@
 
 body{
     /* background-color: tomato; */
-}
+/* }
 
 .buttonStyle{
     float: right;
-}
+} */
 
-.buttonSpace{
+/* .buttonSpace{
     margin-right: 10px;
 }
 
 #contactButton{
 
-}
+} */

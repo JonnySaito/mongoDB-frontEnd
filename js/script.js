@@ -1,8 +1,9 @@
 // Make an Ajax request for all data (we have json) and give it as a list
 let serverURL;
 let serverPort;
+let url;
 let editing = false;
-
+// Get the JSON file
 $.ajax({
   url: 'config.json',
   type: 'GET',
@@ -10,6 +11,7 @@ $.ajax({
   success:function(keys){
     serverURL = keys['SERVER_URL'];
     serverPort = keys['SERVER_PORT'];
+    url = `${keys['SERVER_URL']}:${keys['SERVER_PORT']}`;
     getProductData();
   },
   error: function(){
@@ -18,19 +20,20 @@ $.ajax({
 });
 
 getProductData = () => {
-    console.log(`${serverURL}:${serverPort}/allProducts`);
+    // console.log(`${serverURL}:${serverPort}/allProducts`);
     $.ajax({
-        url: `${serverURL}:${serverPort}/allProducts`,
+        // url: `${serverURL}:${serverPort}/allProducts`,
+        url: `${url}/allProducts`,
         type: 'GET',
         dataType: 'json',
         success:function(data){
             for (var i = 0; i < data.length; i++) {
-                $('#productBox').append(`
+                $('#productList').append(`
                     <li class="list-group-item d-flex justify-content-between align-items-center" data-id="${data[i]._id}">
                         <span class="productName">${data[i].name}</span>
                         <div>
                             <button class="btn btn-info editBtn">Edit</button>
-                            <button class="btn btn-danger">Remove</button>
+                            <button class="btn btn-danger removeBtn">Remove</button>
                         </div>
                     </li>
                 `);
@@ -38,36 +41,11 @@ getProductData = () => {
         },
         error: function(err){
             console.log(err);
-            console.log('something went wrong');
+            console.log('something went wrong with getting all the products');
         }
     })
 }
-
-$('#productBox').on('click', '.editBtn', function() {
-    // console.log(`${serverURL}:${serverPort}/product/${id}`);
-    event.preventDefault();
-    const id = $(this).parent().parent().data('id');
-    $.ajax({
-        url: `${serverURL}:${serverPort}/product/${id}`,
-        type: 'get',
-        dataType: 'json',
-        success:function(product){
-            console.log(product);
-            $('#productName').val(product['name']);
-            $('#productPrice').val(product['price']);
-            $('#productID').val(product['_id']);
-            $('#addProductButton').text('Edit Product').addClass('btn-warning');
-            $('#heading').text('Edit Product');
-            editing = true;
-        },
-        error:function(err){
-            console.log(err);
-            console.log('Something went wrong with getting the single product');
-        }
-    })
-
-});
-
+// ADD A PRODUCT
 $('#addProductButton').click(function(){
     event.preventDefault();
     let productName = $('#productName').val();
@@ -78,10 +56,9 @@ $('#addProductButton').click(function(){
         console.log('Please enter a product price');
     } else {
         if(editing === true){
-
             const id = $('#productID').val();
             $.ajax({
-                url: `${serverURL}:${serverPort}/editProduct/${id}`,
+                url: `${url}/product/${id}`,
                 type: 'PATCH',
                 data: {
                     name: productName,
@@ -106,12 +83,11 @@ $('#addProductButton').click(function(){
                     console.log('Something went wrong with editing the product');
                 }
             });
-                // console.log(`Edited ${productName} to be $${productPrice}`);
-
+                // console.log(`Edited ${productName} to be ${productPrice}`);
         } else {
             console.log(`${productName} costs $${productPrice}`);
             $.ajax({
-                url: `${serverURL}:${serverPort}/product`,
+                url: `${url}/product`,
                 type: 'POST',
                 data: {
                     name: productName,
@@ -138,22 +114,41 @@ $('#addProductButton').click(function(){
         }
     }
 });
+// EDIT button to fill the form with existing product
+$('#productList').on('click', '.editBtn', function() {
+    // console.log(`${serverURL}:${serverPort}/product/${id}`);
+    event.preventDefault();
+    const id = $(this).parent().parent().data('id');
+    $.ajax({
+        url: `${url}/product/${id}`,
+        type: 'get',
+        dataType: 'json',
+        success:function(product){
+            console.log(product);
+            $('#productName').val(product['name']);
+            $('#productPrice').val(product['price']);
+            $('#productID').val(product['_id']);
+            $('#addProductButton').text('Edit Product').addClass('btn-warning');
+            $('#heading').text('Edit Product');
+            editing = true;
+        },
+        error:function(err){
+            console.log(err);
+            console.log('Something went wrong with getting the single product');
+        }
+    })
 
+});
+// REMOVE a product
 $('#productList').on('click', '.removeBtn', function(){
     event.preventDefault();
     const id = $(this).parent().parent().data('id');
     const li = $(this).parent().parent();
     $.ajax({
-      url: `${serverURL}:${serverPort}/products/${id}`,
+      url: `${url}/product/${id}`,
       type: 'DELETE',
       success: function(result){
-        console.log('You removed an item');
-        const allProducts = $('.productItem');
-        allProducts.each(function(){
-            if($(this).data('id') === id){
-                $(this).remove();
-            }
-        });
+        li.remove();
       },
       error:function(err) {
         console.log(err);
@@ -162,112 +157,98 @@ $('#productList').on('click', '.removeBtn', function(){
     })
 });
 
-$('#contactButton').click(function(){
+// $('#contactButton').click(function(){
+//     event.preventDefault();
+//     let userName = $('#userName').val();
+//     let userEmail = $('#userEmail').val();
+//     let userMessage = $('#userMessage').val();
+//     // console.log(userName, userEmail, userMessage);
+//     if(userName.length === 0){
+//       console.log('please enter your name');
+//     } else if(userEmail.length === 0){
+//       console.log('please enter your email address');
+//     } else if(userMessage.length === 0){
+//       console.log('please write a message to us, kind sir or madam');
+//     } else{
+//       $.ajax({
+//         url: `${SERVER_URL}:${SERVER_PORT}/contact`,
+//         type: 'POST',
+//         data: {
+//           name: userName,
+//           email: userEmail,
+//           message: userMessage
+//         },
+//         success: function(result){
+//           console.log(result);
+//         },
+//         error: function(error){
+//           console.log(error);
+//           console.log('something screwed up with sending user data');
+//         }
+//       })
+//     }
+// });
+
+$('#loginTabBtn').click(function(){
     event.preventDefault();
-    let userName = $('#userName').val();
-    let userEmail = $('#userEmail').val();
-    let userMessage = $('#userMessage').val();
-    // console.log(userName, userEmail, userMessage);
-    if(userName.length === 0){
-      console.log('please enter your name');
-    } else if(userEmail.length === 0){
-      console.log('please enter your email address');
-    } else if(userMessage.length === 0){
-      console.log('please write a message to us, kind sir or madam');
-    } else{
-      $.ajax({
-        url: `${SERVER_URL}:${SERVER_PORT}/contact`,
-        type: 'POST',
-        data: {
-          name: userName,
-          email: userEmail,
-          message: userMessage
-        },
-        success: function(result){
-          console.log(result);
-        },
-        error: function(error){
-          console.log(error);
-          console.log('something screwed up with sending user data');
-        }
-      })
-    }
+    $('.nav-link').removeClass('active');
+    $(this).addClass('active');
+    $('#loginForm').show();
+    $('#registerForm').hide();
 });
 
+$('#registerTabBtn').click(function(){
+    event.preventDefault();
+    $('.nav-link').removeClass('active');
+    $(this).addClass('active');
+    $('#loginForm').hide();
+    $('#registerForm').removeClass('d-none').show();
 
+});
 
+$('#registerForm').submit(function(){
+    event.preventDefault();
+    console.log('register button has been clicked');
+    const username = $('#rUsername').val();
+    const email = $('#rEmail').val();
+    const password = $('#rPassword').val();
+    const confirmPassword = $('#rConfirmPassword').val();
+    console.log(username);
+    console.log(email);
+    console.log(password);
+    console.log(confirmPassword);
+    if(username.length === 0){
+        console.log('please enter a username');
+    } else if (email.length === 0) {
+        console.log('please enter an email');
+    } else if (password.length === 0) {
+        console.log('please enter a password');
+    } else if (confirmPassword.length === 0) {
+        console.log('please confirm your password');
+    } else if (password !== confirmPassword) {
+        console.log('your passwords do not match');
+    } else {
+        $.ajax({
+            url:`${url}/users`,
+            type: 'POST',
+            data: {
+                username: username,
+                email: email,
+                password: password
+            },
+            success: function(result){
+                console.log(result);
+            },
+            error: function(err){
+                console.log(err);
+                console.log('something went wrong with registering a new user');
+            }
+        })
+    }
 
+});
 
-// DELETE ALL THE STUFF BELOW:
-
-
-
-// $(document).ready(function(){
-//     let portData;
-//     $.ajax({
-//         url: 'config.json',
-//         type: 'GET',
-//         dataType: 'json',
-//         success: function(keys){
-//           portData = keys;
-//           console.log(portData);
-//           // $.ajax({
-//           //     url: `${portData.SERVER_URL}:${portData.SERVER_PORT}/allProducts`,
-//           //     type: 'GET',
-//           //     dataType: 'json',
-//           //     success: function(data){
-//           //         // console.log(data);
-//           //         for (var i = 0; i < data.length; i++) {
-//           //             $('#productBox').append(`<a class="list-group-item list-group-item-action">${data[i].name}<div class="buttonStyle"><button type="button" class="btn btn-info buttonSpace">Edit</button><button type="button" class="btn btn-danger">Remove</button></div></a>`);
-//           //         }
-//           //     },
-//           //     error: function(){
-//           //         console.log('got an error');
-//           //     }
-//           // })
-//         },
-//         error: function(){
-//           console.log('Cannot find config.json file, cannot run application');
-//         }
-//     });
-//
-//     let data;
-//
-//
-//
-//
-//     $('#addProductButton').click(function(){
-//         // check if user has typed anything in the two input fields
-//         // console.log('button has been clicked');
-//         // prevent the default of submitting data and refreshing the page
-//         event.preventDefault();
-//         let productName = $('#productName').val();
-//         let productPrice = $('#productPrice').val();
-//         console.log(productName);
-//         if(productName.length === 0){
-//             console.log('please enter a product name');
-//         } else if(productPrice.length === 0){
-//             console.log('please enter a price');
-//         } else {
-//             console.log(`${productName} costs $${productPrice}`);
-//             $.ajax({
-//                 url: `${SERVER_URL}:${SERVER_PORT}/product`,
-//                 type: 'POST',
-//                 data: {
-//                     name: productName,
-//                     price: productPrice
-//                 },
-//                 success: function(result){
-//                     console.log(result);
-//                 },
-//                 error: function(error){
-//                     console.log(error);
-//                     console.log('something went wrong with sending the data');
-//                 }
-//             })
-//         }
-//         // Now we want to send/POST data
-//     });
-//
-//
-// });
+// THis below makes the modal appear on pageload; just while we're working on it; we'll turn it off later
+$(document).ready(function(){
+    $('#authForm').modal('show');
+})

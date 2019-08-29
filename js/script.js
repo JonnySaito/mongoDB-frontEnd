@@ -245,10 +245,53 @@ $('#registerForm').submit(function(){
             }
         })
     }
-
 });
 
-// THis below makes the modal appear on pageload; just while we're working on it; we'll turn it off later
+// Click login button --> check if username is valid (Front-end validation)
+$('#loginForm').submit(function(){
+    event.preventDefault();
+    console.log('Login button has been clicked');
+    const username = $('#lUsername').val();
+    const password = $('#lPassword').val();
+    console.log(username);
+    console.log(password);
+    if(username.length === 0){
+        console.log('Please enter a username');
+    } else if (password.length === 0) {
+        console.log('Please enter a password');
+    } else {
+        console.log('Username is OK!');
+        $.ajax({
+            url:`${url}/getUser`,
+            type: 'POST',
+            data: {
+                username: username,
+                password: password
+            },
+            success: function(result){
+                if(result === 'invalid user'){
+                    console.log('cannot find user with that username');
+                } else if(result === 'invalid password'){
+                    console.log('your password is wrong');
+                } else {
+                    console.log('let us log you in');
+                    console.log(result);
+
+                    sessionStorage.setItem('userId', result['_id']);
+                    sessionStorage.setItem('userName', result['username']);
+                    sessionStorage.setItem('userEmail', result['email']);
+                }
+            },
+            error: function(err){
+                console.log(err);
+                console.log('something went wrong with logging in');
+            }
+        })
+    }
+});
+
+// This below makes the modal appear on pageload; just while we're working on it; we'll turn it off later
 $(document).ready(function(){
     $('#authForm').modal('show');
+    console.log(sessionStorage);
 })

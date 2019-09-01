@@ -291,7 +291,24 @@ $('#loginForm').submit(function(){
 });
 
 // This below makes the modal appear on pageload; just while we're working on it; we'll turn it off later
-$(document).ready(function(){
+// $(document).ready(function(){
+//     $('#authForm').modal('show');
+//     console.log(sessionStorage);
+// });
+
+$('#loginButton').on('click', function(){
+    // showModal();
     $('#authForm').modal('show');
+    // $('#loginButton').addClass('d-none');
+    $('#loginButton').hide();
+    $('#logoutButton').addClass('d-inline');
     console.log(sessionStorage);
-})
+});
+
+$('#logoutButton').on('click', function(){
+    // sessionStorage.clear('userId');
+    // sessionStorage.clear('userName');
+    // sessionStorage.clear('userEmail');
+    $('#authForm').modal('hide');
+    sessionStorage.clear();
+});

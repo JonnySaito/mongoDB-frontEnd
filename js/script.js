@@ -18,6 +18,33 @@ $.ajax({
     console.log('cannot find config.json file, cannot run application');
   }
 });
+// On page load
+$(document).ready(function(){
+    // This allows the modal to pop up on load (we will remove this line when we are done with the login / register functionality)
+    // $('#authForm').modal('show');
+
+    // Check to see if there is a value called user_Name in the sessionStorage, this will only be there when we login in successfully
+    if(sessionStorage['userName']){
+        // you have logged in
+        console.log('you are logged in ');
+        $('#loginBtn').hide();
+        $('#logoutBtn').removeClass('d-none');
+        $('#addProductSection').removeClass('d-none');
+
+    } else {
+        // you aren't logged in
+        console.log('please sign in');
+    }
+
+    // If you check sessionStorage when there isnt anything in there it should be an empty array
+    // If you check it when there is some values, it will be an object
+    console.log(sessionStorage);
+
+    // From here we are going to be using a lot of if statements to hide and show specifc elements.
+    // If there is a value for user_Name, then we will see the Logout button, but if there isn't then we will see the Login/Register button.
+    // To clear out sessionStorage we need to call. sessionStorage.clear() which will clear all the items in our session storage.
+    // This will happen on a click function for our logout button
+});
 
 // Get all the products
 getProductsData = () => {
@@ -36,10 +63,12 @@ getProductsData = () => {
                     >
                         <span class="productName">${data[i].name}</span>`;
                         if(sessionStorage['userName']){
-                            product += `<div>
-                                            <button class="btn btn-info editBtn">Edit</button>
-                                            <button class="btn btn-danger removeBtn">Remove</button>
-                                        </div>`;
+                            if (sessionStorage['userID'] === data[i].user_id) {
+                                product += `<div>
+                                                <button class="btn btn-info editBtn">Edit</button>
+                                                <button class="btn btn-danger removeBtn">Remove</button>
+                                            </div>`;
+                            }
                         }
                     product += `</li>
                 `;
@@ -56,6 +85,10 @@ getProductsData = () => {
 //Add or Edit a product
 $('#addProductButton').click(function(){
     event.preventDefault();
+    if (!sessionStorage['userID']) {
+        alert('401, permission denied');
+        return;
+    };
     let productName = $('#productName').val();
     let productPrice = $('#productPrice').val();
     if(productName.length === 0){
@@ -70,7 +103,8 @@ $('#addProductButton').click(function(){
                 type: 'PATCH',
                 data: {
                     name: productName,
-                    price: productPrice
+                    price: productPrice,
+                    userId: sessionStorage['userID']
                 },
                 success:function(result){
                     $('#productName').val(null);
@@ -97,8 +131,10 @@ $('#addProductButton').click(function(){
                 url: `${url}/product`,
                 type: 'POST',
                 data: {
+                    // data we're sending from front end
                     name: productName,
-                    price: productPrice
+                    price: productPrice,
+                    userId: sessionStorage['userID']
                 },
                 success:function(result){
                     $('#productName').val(null);
@@ -127,6 +163,10 @@ $('#addProductButton').click(function(){
 // Edit button to fill the form with exisiting product
 $('#productList').on('click', '.editBtn', function() {
     event.preventDefault();
+    if (!sessionStorage['userID']) {
+        alert('401, permission denied');
+        return;
+    };
     // Get the ID of the product we want to edit.
     // We have saved the ID into data-id of the parent li of the button
     const id = $(this).parent().parent().data('id');
@@ -134,9 +174,13 @@ $('#productList').on('click', '.editBtn', function() {
     // Send an Ajax request to our route for getting a single product
     $.ajax({
         url: `${url}/product/${id}`,
-        type: 'get',
+        type: 'post',
+        data: {
+            userId: sessionStorage['userID']
+        },
         dataType: 'json',
         success:function(product){
+            console.log(product);
             $('#productName').val(product['name']);
             $('#productPrice').val(product['price']);
             $('#productID').val(product['_id']);
@@ -154,6 +198,10 @@ $('#productList').on('click', '.editBtn', function() {
 // Remove a product
 $('#productList').on('click', '.removeBtn', function(){
     event.preventDefault();
+    if (!sessionStorage['userID']) {
+        alert('401, permission denied');
+        return;
+    };
     const id = $(this).parent().parent().data('id');
     const li = $(this).parent().parent();
     $.ajax({
@@ -189,6 +237,10 @@ $('#registerTabBtn').click(function(){
 // Register Form
 $('#registerForm').submit(function(){
     event.preventDefault();
+    if (sessionStorage['userID']) {
+        alert('401, permission denied');
+        return;
+    };
     // Get all the values from the input fields
     const username = $('#rUsername').val();
     const email = $('#rEmail').val();
@@ -233,6 +285,10 @@ $('#registerForm').submit(function(){
 // Login Form
 $('#loginForm').submit(function(){
     event.preventDefault();
+    if (sessionStorage['userID']) {
+        alert('401, permission denied');
+        return;
+    };
     // Get the two input fields
     const username = $('#lUsername').val();
     const password = $('#lPassword').val();
@@ -289,8 +345,11 @@ $('#loginForm').submit(function(){
     }
 });
 
-
 $('#logoutBtn').click(function(){
+    if (!sessionStorage['userID']) {
+        alert('401, permission denied');
+        return;
+    };
     sessionStorage.clear();
     getProductsData();
     $('#loginBtn').show();
@@ -299,32 +358,3 @@ $('#logoutBtn').click(function(){
     $('#lUsername').val(null);
     $('#lPassword').val(null);
 });
-
-//We are using this so that our modal appears on load
-//We will turn this off when we are ready
-$(document).ready(function(){
-    // This allows the modal to pop up on load (we will remove this line when we are done with the login / register functionality)
-    // $('#authForm').modal('show');
-
-    // Check to see if there is a value called user_Name in the sessionStorage, this will only be there when we login in successfully
-    if(sessionStorage['userName']){
-        // you have logged in
-        console.log('you are logged in ');
-        $('#loginBtn').hide();
-        $('#logoutBtn').removeClass('d-none');
-        $('#addProductSection').removeClass('d-none');
-
-    } else {
-        // you aren't logged in
-        console.log('please sign in');
-    }
-
-    // If you check sessionStorage when there isnt anything in there it should be an empty array
-    // If you check it when there is some values, it will be an object
-    console.log(sessionStorage);
-
-    // From here we are going to be using a lot of if statements to hide and show specifc elements.
-    // If there is a value for user_Name, then we will see the Logout button, but if there isn't then we will see the Login/Register button.
-    // to clear out sessionStorage we need to call. sessionStorage.clear() which will clear all the items in our session storage.
-    // This will happen on a click function for our logout button
-})

@@ -48,20 +48,29 @@ $(document).ready(function(){
 
 // Get all the products
 getProductsData = () => {
+    console.log('something something');
     $.ajax({
         // url: `${serverURL}:${serverPort}/allProducts`,
+        // Run an ajax request to the route to get all the products
         url: `${url}/allProducts`,
         type: 'GET',
         dataType: 'json',
         success:function(data){
+            console.log('hello success');
+            // Because we run this function multiple times now, we need to empty the product list each time we call it
             $('#productList').empty();
+            // Loop over all the items/products that get back from the database
             for (var i = 0; i < data.length; i++) {
+                // Create a variable called "product" that will hold our template string for our product.
                 let product = `
                     <li
                         class="list-group-item d-flex justify-content-between align-items-center productItem"
                         data-id="${data[i]._id}"
                     >
                         <span class="productName">${data[i].name}</span>`;
+                        // We only want to see the edit and remove buttons when a user is logged in.
+                        // So we have closed the string above and written an if statement to only add on the buttons
+                        // if someone is logged on.
                         if(sessionStorage['userName']){
                             if (sessionStorage['userID'] === data[i].user_id) {
                                 product += `<div>
@@ -70,8 +79,9 @@ getProductsData = () => {
                                             </div>`;
                             }
                         }
-                    product += `</li>
-                `;
+                        // Either way, we have to close the li; so we add the closing li at the end.
+                    product += `</li>`;
+                    // Once we've created our product variable with all the data/html, we append it to the productList ul
                 $('#productList').append(product);
             }
         },
@@ -249,7 +259,7 @@ $('#registerForm').submit(function(){
 
     // We are including basic validation
     // Eventually we would need to include a more thorough validation (required, min, max values, emails, uniques, etc)
-    // For time's sake, we are just checking to see if there is a value in each input field
+    // For time's sake, we are just checking to see if there is a value in each input field.
     if(username.length === 0){
         console.log('please enter a username');
     } else if(email.length === 0){
@@ -300,7 +310,7 @@ $('#loginForm').submit(function(){
         console.log('please enter a password');
     } else {
         // Send an ajax request to our login route.
-        // Even though we are getting back a user, beacuse we are dealing with secure data (password), we want to use a POST request
+        // Even though we are getting back a user, because we are dealing with secure data (password), we want to use a POST request
         $.ajax({
             url: `${url}/getUser`,
             type: 'POST',
@@ -311,7 +321,7 @@ $('#loginForm').submit(function(){
             success:function(result){
                 // the result value is whatever gets sent back from the server.
                 if(result === 'invalid user'){
-                    // If someone tries to login with a username that doesnt exist
+                    // If someone tries to login with a username that doesn't exist
                     console.log('cannot find user with that username');
                 } else if(result === 'invalid password'){
                     // If someone logs in with a valid username but the password is wrong
@@ -321,12 +331,12 @@ $('#loginForm').submit(function(){
                     console.log('lets log you in');
                     console.log(result);
 
-                    // sessionStorage (and LocalStorage) allows you to save data into your web browser and will stay there until they get removed
-                    // sessionStorage will keep data until the session is finsihed (closing the tab or browser)
+                    // sessionStorage (and LocalStorage) allows you to save data into your web browser and will stay there until it gets removed
+                    // sessionStorage will keep data until the session is finished (closing the tab or browser)
                     // localStorage will keep the data forever until someone manually clears the localStorage cache.
-                    // This is how we will be creating our login system
+                    // This is how we will be creating our login system.
                     // If we save a value into sessionStorage or localStorage, if we keep refreshing our page, the value we saved will still be there.
-                    // In our document.ready() function bellow we are checking to see if there is a value in our sessionStorage called user_Name
+                    // In our document.ready() function below we are checking to see if there is a value in our sessionStorage called user_Name
                     sessionStorage.setItem('userID', result['_id']);
                     sessionStorage.setItem('userName', result['username']);
                     sessionStorage.setItem('userEmail', result['email']);
